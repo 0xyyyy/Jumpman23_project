@@ -137,7 +137,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 new_df["distance_miles"] = round(haversine_distance(new_df["pickup_lat"], new_df["pickup_lon"], new_df["dropoff_lat"], new_df["dropoff_lon"]),4)
 ```
 
-###Data Analysis 
+### Data Analysis 
 
 Based on the data, I believe a multi-pronged approach is required to achieve 20% market growth in NYC. 
 
@@ -149,7 +149,7 @@ The number one priority to improving market growth in the near and long term fut
 
 While investigating the amount of time it took to place an order I noticed that there were many outliers that lie well above the median. These outliers indicate that there may be UI/UX problems with the Jumpman23 app. By improving data acquisition on the types of items that customers are most likely to order we could provide data-driven restaurant recommendations to reduce latency to order placement and improve usabiliity of the app. 
 
-![Latency to order placement](/images/latency_to_order.png)
+![Latency to order placement](/Jumpman23/images/latency_to_order.png)
 
 **Prep Time, Transit Time, and Total Order Time** 
 
@@ -169,4 +169,24 @@ max	1.491424e+06	405547.000000	181543.000000	16.000000	73.221102	40.818082	-73.9
 
 ![transit](/Jumpman23/images/preptransitorder_time.png)
 
-Another area for improvement is in transit time. Average order time is around 45 minutes with a greater portion of this time spent on prep_time. In order to reduce the amount of time spent prepping restaurants with high order volume can prepare popular menu items ahead of time. Also, improving the system that assigns Jumpmen to orders based on pickup and dropoff location could improve total order time as well. 
+Another area for improvement is in transit time. Average order time is around 45 minutes with a greater portion of this time spent on prep_time. In order to reduce the amount of time spent prepping restaurants with high order volume can prepare popular menu items ahead of time. Also, improving the system that assigns Jumpmen to orders based on pickup and dropoff location could improve total order time as well. Finally, ensuring that the Jumpman23 app is able to place orders ahead of time 100% of the time could help cut time on edge cases where the Jumpmen must make the order after arriving at the pickup location.  
+
+**Delivery Vehicles** 
+
+![vehicle type](/Jumpman23/images/delivery_vehicle_types.png)
+
+![delivery_distance](/Jumpman23/images/dist_traveled_by_tye.png)
+
+Due to the nature of the NYC market it appears that the most popular mode of transportation for Jumpmen is by bicycle. Pairing the Jumpman23 app with directional apps tailored to bike riders could improve the transit time for the share of Jumpmen using bicycles for transportation. 
+
+**Merchant Metrics**
+
+![top ten](/Jumpman23/images/tp_ten_rest.png)
+
+![top_fulfill](/Jumpman23/images/tp_ten_fulfillment.png)
+
+![hourly_total](/Jumpman23/images/hourly_total.png)
+
+According to the analysis, Shake Shack has the highest order volume of all restaurants and a fulfillment time that sits around the average for all merchants. Additionally, there are spikes in hourly order counts at 11 am and a greater spike at 6pm. Before these rush hours restaurants can prepare their most heavily requested items ahead of time in order to reduce latency to order fulfillment even during peak hours. Harboring a reputation as a delivery app that delivers on time even during peak hours can help beat out any competition that Jumpman23 may have in this market. 
+
+**Pickup and Dropoff Heatmaps** 
