@@ -239,7 +239,7 @@ ax.set_xticklabels(["bicycle", "car", "truck", "scooter", "walker", "van", "moto
 plt.title("Distance Travelled by Vehicle Type")
 ```
 
-![delivery_distance](/Jumpman23/images/dist_traveled_by_tye.png)
+![delivery_distance](/Jumpman23/images/dist_traveled_by_type.png)
 
 Due to the nature of the NYC market it appears that the most popular mode of transportation for Jumpmen is by bicycle. Pairing the Jumpman23 app with directional apps tailored to bike riders could improve the transit time for the share of Jumpmen using bicycles for transportation. 
 
@@ -286,3 +286,31 @@ plt.ylabel("Count of Orders")
 According to the analysis, Shake Shack has the highest order volume of all restaurants and a fulfillment time that sits around the average for all merchants. Additionally, there are spikes in hourly order counts at 11 am and a greater spike at 6pm. Before these rush hours restaurants can prepare their most heavily requested items ahead of time in order to reduce latency to order fulfillment even during peak hours. Harboring a reputation as a delivery app that delivers on time even during peak hours can help beat out any competition that Jumpman23 may have in this market. 
 
 **Pickup and Dropoff Heatmaps** 
+
+**Pickup Heatmap**
+```Python
+#Create heatmap of lat/long for pickups on map of NYC using leaflet.js, use counts of distinct lat and long in order to obtain intensity of different heatmap layers
+gmaps.configure(api_key=api_key)
+fig = gmaps.figure(center=nyc_coords, zoom_level=11)
+fig.add_layer(gmaps.heatmap_layer(time_df[["pickup_lat", "pickup_lon"]]))
+fig
+```
+![pickup](/Jumpman23/images/pickup_heatmap.png)
+
+**Dropoff Heatmap**
+```Python
+fig = gmaps.figure(center=nyc_coords, zoom_level=11)
+fig.add_layer(gmaps.heatmap_layer(time_df[["dropoff_lat", "dropoff_lon"]]))
+fig
+```
+![dropoff](/Jumpman23/images/dropoff_heatmap.png)
+
+Pickup areas are centralized in lower manhattan, however, dropoff locations seem to be more disparate. Improvements could be made to restaurant suggestions to take delivery time into account urging customers in areas further away from hotspot pickup spots to opt for similar restaurants that are closer to their location. 
+
+### Conclusion 
+
+The purpose of this analysis was to find ways that the NYC market could grow by 20% within two months. My strategy to achieve this target is the following: 
+1. Fix data integrity issues. Acquiring data on customer purchasing habits will be a key strategy in driving new customer acquisition. 
+2. Ad campaigns based on customer purchasing data. Leveraging user spending data to create ad campaigns which mirror customer tastes will help to increase the number of new customers using the app as well as allow restaurants to prepare popular items in advance during peak hours at 11am and 6pm. Providing discounts on popular items at lunch and dinner time could also drive sales. 
+3. Improve purchase-in-advance systems. Reduce the amount prep time contributes to total order time by ensuring that Jumpman23 is able to place orders ahead of time for 100% of orders. Edge cases where Jumpmen are forced to place the order upon arrival at pickup locations is contributing to increased total order duration and could be driving customer dissatisfaction. 
+4. Improved routing for bike users. Seeing as the NYC market is fueled by Jumpmen riding bicycles it makes sense to invest in improved navigation systems geared towards bicyclists. 
