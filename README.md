@@ -149,6 +149,17 @@ The number one priority to improving market growth in the near and long term fut
 
 While investigating the amount of time it took to place an order I noticed that there were many outliers that lie well above the median. These outliers indicate that there may be UI/UX problems with the Jumpman23 app. By improving data acquisition on the types of items that customers are most likely to order we could provide data-driven restaurant recommendations to reduce latency to order placement and improve usabiliity of the app. 
 
+```Python
+#Create boxplot of time to order 
+fig = plt.figure(figsize=(10,7))
+ax = fig.add_subplot(111)
+
+bp = ax.boxplot(order_length_df["how_long_it_took_to_order"], notch=True, vert=False)
+ax.set_xlabel("Time to Place Order (minutes)")
+ax.set_ylabel("Order Time")
+plt.title("Latency to Order Placement")
+```
+
 ![Latency to order placement](/Jumpman23/images/latency_to_order.png)
 
 **Prep Time, Transit Time, and Total Order Time** 
@@ -167,13 +178,66 @@ min	1.271706e+06	242.000000	3296.000000	1.000000	1.383292	40.665611	-74.015837	4
 max	1.491424e+06	405547.000000	181543.000000	16.000000	73.221102	40.818082	-73.920980	40.848324	-73.924124	267.954044	119.190060	340.308810
 ```
 
+```Python
+#Create boxplot of prep time, transit time, and total time
+fig = plt.figure(figsize=(10,7))
+ax = fig.add_subplot(111)
+
+bp = ax.boxplot([prep_time_df["prep_time"], transit_time_df["transit_time"], total_order_df["total_order_time"]], notch=True, vert=False)
+ax.set_yticklabels(["Prep Time", "Transit Time", "Total Order Time"])
+ax.set_xlabel("Time (minutes)")
+plt.title("Prep Time, Transit Time, and Total Order Time in Minutes")   
+```
+
+
 ![transit](/Jumpman23/images/preptransitorder_time.png)
 
 Another area for improvement is in transit time. Average order time is around 45 minutes with a greater portion of this time spent on prep_time. In order to reduce the amount of time spent prepping restaurants with high order volume can prepare popular menu items ahead of time. Also, improving the system that assigns Jumpmen to orders based on pickup and dropoff location could improve total order time as well. Finally, ensuring that the Jumpman23 app is able to place orders ahead of time 100% of the time could help cut time on edge cases where the Jumpmen must make the order after arriving at the pickup location.  
 
 **Delivery Vehicles** 
 
+```Python
+vehicle_type = {
+    "Type" : ["Bicycle", "Car", "Truck", "Scooter", "Walker", "Van", "Motorcycle"],
+    "Count" : [new_df[new_df["vehicle_type"] == "bicycle"].shape[0], new_df[new_df["vehicle_type"] == "car"].shape[0], new_df[new_df["vehicle_type"] == "truck"].shape[0], new_df[new_df["vehicle_type"] == "scooter"].shape[0], new_df[new_df["vehicle_type"] == "walker"].shape[0], new_df[new_df["vehicle_type"] == "van"].shape[0], new_df[new_df["vehicle_type"] == "motorcycle"].shape[0]]
+}
+fig = plt.figure(figsize=(10,7))
+ax = fig.add_subplot(111)
+
+bar = ax.bar(x=vehicle_type["Type"], height=vehicle_type["Count"])
+ax.set_ylabel("Count of Vehicle Type")
+plt.title("Delivery Vehicle Types")
+```
+
 ![vehicle type](/Jumpman23/images/delivery_vehicle_types.png)
+
+```Python
+#Retrieve distance traveled by each vehicle type 
+bicycle = new_df.loc[new_df["vehicle_type"] == "bicycle"]
+bicycle_distance = bicycle["distance_miles"].tolist()
+car = new_df.loc[new_df["vehicle_type"] == "car"]
+car_distance = car["distance_miles"].tolist()
+truck = new_df.loc[new_df["vehicle_type"] == 'truck']
+truck_distance = truck["distance_miles"].tolist()
+scooter = new_df.loc[new_df["vehicle_type"] == 'scooter']
+scooter_distance = scooter["distance_miles"].tolist()
+walker = new_df.loc[new_df['vehicle_type'] == "walker"]
+walker_distance = walker["distance_miles"].tolist()
+van = new_df.loc[new_df["vehicle_type"] == 'van']
+van_distance = van["distance_miles"].tolist()
+motorcycle = new_df.loc[new_df["vehicle_type"]=='motorcycle']
+motorcycle_distance = motorcycle["distance_miles"].tolist()
+data = [bicycle_distance, car_distance, truck_distance, scooter_distance, walker_distance, van_distance, motorcycle_distance]
+
+#boxplot of distance travelled by vehicle type 
+fig = plt.figure(figsize=(10,7))
+ax = fig.add_subplot(111)
+
+bp = ax.boxplot(data)
+ax.set_ylabel("Distance Travelled (miles)")
+ax.set_xticklabels(["bicycle", "car", "truck", "scooter", "walker", "van", "motorcycle"])
+plt.title("Distance Travelled by Vehicle Type")
+```
 
 ![delivery_distance](/Jumpman23/images/dist_traveled_by_tye.png)
 
@@ -181,9 +245,41 @@ Due to the nature of the NYC market it appears that the most popular mode of tra
 
 **Merchant Metrics**
 
+```Python
+#Find top ten pickup restaurants 
+top_ten = pd.DataFrame(new_df["pickup_place"].value_counts().head(10))
+top_ten_names = top_ten.index.tolist()
+
+fig = plt.figure(figsize=(10,7))
+ax = fig.add_subplot(111)
+
+bar = ax.bar(x=top_ten_names, height=top_ten["pickup_place"])
+ax.set_ylabel("Order Count")
+plt.title("Top 10 Restaurants by Order Count")
+plt.xticks(rotation=90)
+```
+
 ![top ten](/Jumpman23/images/tp_ten_rest.png)
 
+```Python
+fig = plt.figure(figsize=(10,7))
+ax = fig.add_subplot(111)
+
+brp = ax.bar(x=avg_dropoff_latency_dict["Name"], height=avg_dropoff_latency_dict["time"])
+plt.xticks(rotation=90)
+plt.ylabel("Fulfillment Time (minutes)")
+plt.title("Fulfillment Time for Top Ten Restaurants")
+```
+
 ![top_fulfill](/Jumpman23/images/tp_ten_fulfillment.png)
+
+```Python
+fig = plt.figure(figsize=(10,7))
+plt.plot(x, hhcounts)
+plt.xticks(range(24))
+plt.title("Order Volume by Hour")
+plt.ylabel("Count of Orders")
+```
 
 ![hourly_total](/Jumpman23/images/hourly_total.png)
 
