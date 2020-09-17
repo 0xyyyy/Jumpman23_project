@@ -93,4 +93,80 @@ df.loc[df['delivery_id'] == 1274248]
 2986	1274248	208020	60149	car	Murray's Falafel	Middle Eastern	Watermelon	1.0	Desserts	00:07:08.767432	40.732166	-73.981904	40.747019	-73.990922	2014-10-01 17:25:48.54633	2014-10-01 17:40:32.886964	2014-10-01 17:53:54.166799	2014-10-01 18:09:37.353403
 ```
 
+It looks like different rows are generated for each item on the same delivery id. This could impact order volume analysis and show greater order volume for restaurants that receive multiple item requests per order. In order to ensure the integrity of the following analysis rows with duplicate delivery_id's will be expunged leaving a dataframe with one order per delivery_id. 
 
+```Python 
+new_df = df.drop_duplicates(subset="delivery_id")
+if len(new_df) == df["delivery_id"].nunique():
+    print("dataframe clean")
+```
+
+### Data Processing 
+
+In addition to cleaning the DataFrame of duplicate rows we will create 4 new columns to aid in analysis: 
+**prep_time:** Time between Jumpman arriving at pickup and leaving pickup. 
+**transit_time:** Time between Leaivng pickup and arriving at drop off. 
+**total_order_time:** Time from start of delivery to dropoff.
+**distance_miles:** Distance traveled by Jumpman in miles.
+```Python 
+#Create column for prep time 
+new_df["prep_time"] = new_df["when_the_Jumpman_left_pickup"] - new_df["when_the_Jumpman_arrived_at_pickup"]
+#Convert time to minutes
+new_df["prep_time"] = new_df["prep_time"] / np.timedelta64(1, 'm')
+#Create column for transit time 
+new_df["transit_time"] = new_df["when_the_Jumpman_arrived_at_dropoff"] - new_df["when_the_Jumpman_left_pickup"]
+#convert time to minutes
+new_df["transit_time"] = new_df["transit_time"] / np.timedelta64(1, 'm')
+#Create Column for Total order time 
+new_df["total_order_time"] = new_df["when_the_Jumpman_arrived_at_dropoff"] - new_df["when_the_delivery_started"]
+#convert time to minutes
+new_df["total_order_time"] = new_df["total_order_time"] / np.timedelta64(1, 'm')
+
+#Determine distance traveled between pickup and dropoff, this returns distance traveled in miles
+def haversine_distance(lat1, lon1, lat2, lon2):
+   r = 6371
+   phi1 = np.radians(lat1)
+   phi2 = np.radians(lat2)
+   delta_phi = np.radians(lat2 - lat1)
+   delta_lambda = np.radians(lon2 - lon1)
+   a = np.sin(delta_phi / 2)**2 + np.cos(phi1) * np.cos(phi2) *   np.sin(delta_lambda / 2)**2
+   res = r * (2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a)))
+   return np.round(res, 2)*0.62137
+   
+#compute distance traveled in miles using haversine distance formula, round to 4 decimal places 
+new_df["distance_miles"] = round(haversine_distance(new_df["pickup_lat"], new_df["pickup_lon"], new_df["dropoff_lat"], new_df["dropoff_lon"]),4)
+```
+
+###Data Analysis 
+
+Based on the data, I believe a multi-pronged approach is required to achieve 20% market growth in NYC. 
+
+**Data Acquisition and Integrity**
+
+The number one priority to improving market growth in the near and long term future is improving data acquisition. Ensuring that we are able to capture all information regarding any order is crucial to gaining insights into customer behavior and spending patterns. Many of the following approaches will be aided by improvements to data acquisition. Specifically, being able to capture and gain insight on popular items is crucial to creating ad campaigns that are specific to the purchase habits of customers in the NYC market.
+
+**Latency to Order Placement**
+
+While investigating the amount of time it took to place an order I noticed that there were many outliers that lie well above the median. These outliers indicate that there may be UI/UX problems with the Jumpman23 app. By improving data acquisition on the types of items that customers are most likely to order we could provide data-driven restaurant recommendations to reduce latency to order placement and improve usabiliity of the app. 
+
+![Latency to order placement](/images/latency_to_order.png)
+
+**Prep Time, Transit Time, and Total Order Time** 
+
+```Python
+new_df.describe()
+
+delivery_id	customer_id	jumpman_id	item_quantity	how_long_it_took_to_order	pickup_lat	pickup_lon	dropoff_lat	dropoff_lon	prep_time	transit_time	total_order_time
+count	5.214000e+03	5214.000000	5214.000000	3984.000000	2579.000000	5214.000000	5214.000000	5214.000000	5214.000000	4719.000000	4719.000000	5214.000000
+mean	1.379183e+06	176061.059647	102783.959340	1.245231	7.698968	40.741633	-73.986928	40.744462	-73.985744	18.294248	14.041480	45.216308
+std	6.469072e+04	116624.801790	48532.292063	0.781632	5.712095	0.022772	0.015002	0.025223	0.018061	11.715884	9.314023	19.687987
+min	1.271706e+06	242.000000	3296.000000	1.000000	1.383292	40.665611	-74.015837	40.649356	-74.017679	0.001877	0.839419	3.047181
+25%	1.322045e+06	77518.250000	61204.500000	1.000000	4.359893	40.724340	-73.996630	40.725440	-74.000193	10.369364	7.938390	32.122191
+50%	1.375663e+06	129880.500000	113563.000000	1.000000	6.151847	40.735783	-73.988682	40.741115	-73.989367	15.333771	11.658124	42.020648
+75%	1.435623e+06	294478.000000	143392.000000	1.000000	9.034514	40.758939	-73.980739	40.764239	-73.974409	22.977090	17.304775	54.240649
+max	1.491424e+06	405547.000000	181543.000000	16.000000	73.221102	40.818082	-73.920980	40.848324	-73.924124	267.954044	119.190060	340.308810
+```
+
+![transit](/images/preptransitorder_time.png)
+
+Another area for improvement is in transit time. Average order time is around 45 minutes with a greater portion of this time spent on prep_time. In order to reduce the amount of time spent prepping restaurants with high order volume can prepare popular menu items ahead of time. Also, improving the system that assigns Jumpmen to orders based on pickup and dropoff location could improve total order time as well. 
