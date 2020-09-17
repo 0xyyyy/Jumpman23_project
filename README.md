@@ -167,6 +167,6 @@ min	1.271706e+06	242.000000	3296.000000	1.000000	1.383292	40.665611	-74.015837	4
 max	1.491424e+06	405547.000000	181543.000000	16.000000	73.221102	40.818082	-73.920980	40.848324	-73.924124	267.954044	119.190060	340.308810
 ```
 
-![transit](/images/preptransitorder_time.png)
+![transit](/Jumpman23/images/preptransitorder_time.png)
 
 Another area for improvement is in transit time. Average order time is around 45 minutes with a greater portion of this time spent on prep_time. In order to reduce the amount of time spent prepping restaurants with high order volume can prepare popular menu items ahead of time. Also, improving the system that assigns Jumpmen to orders based on pickup and dropoff location could improve total order time as well. 
