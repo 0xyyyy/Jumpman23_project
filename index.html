@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jumpman23 Analysis</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Jumpman23</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Delivery Metrics</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Consumer Behavior</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Insights</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    <div class="container">
+        <div class="col-lg-12">
+            <h1>Jumpman23 New Market Analysis</h1>
+            <p>
+                Jumpman23 is an on-demand meal delivery service and has recently opened for business in New York City. We are looking to grow this market by 20% within 2 months. 
+                Some of the challenges of doing so involve data integrity issues, delivery delays, and user interface issues. The following analysis provides a breakdown of 
+                the data integrity issues and poses solutions to the prinicipal issues surrounding the NYC market. 
+            </p>
+        </div>
+        <div class="col-lg-12">
+            <h4>Data Integriy</h4>
+            <br>
+            <p>The first step to understanding the NYC market lies in uncovering problems with data acquisition and retrieval.</p>
+            <img src="/Jumpman23/images/dfinfo.PNG" alt="df.info"><br>
+            <b>Using Pandas df.info() provides us with some valuable information:</b>
+            <ul>
+                <li>There is a large number of null values within the item_name, item_quantity, and item_category_name columns. This indicates an issue with data collection</li>
+                <li>A number of objects that indicate datetime are stored as objects rather than datetime objects.</li>
+                <li>The how_long_it_took_to_order column should be cast as a timedelta object rather than an object.</li>
+            </ul>
+            <br>
+            <b>Next, I used df.nunique() to check for duplicate values that may interfere with the analysis:</b>
+            <img src="Jumpman23/images/dfnunique.PNG" alt="df.nunique">
+            <p>The main takeaway from this view is that the delivery_id column has duplicate values. In order to investigate this further I looked at instances where Delivery ID's were identical:</p>
+            <img src="Jumpman23/images/duplicates.PNG" alt="duplicate values">
+            <p>It looks like different rows are generated for each item on the same delivery id. This could impact order volume analysis and show greater order volume for restaurants that receive multiple item requests per order. In order to ensure the integrity of the following analysis rows with duplicate delivery_id's will be expunged leaving a dataframe with one order per delivery_id.</p>
+            <br>
+            <b>Finally, we will add some columns to aid in analysis.</b>
+            <img src="Jumpman23/images/new_columns.PNG" alt="new_coumns">
+            <ul>
+                <li>prep_time: Time between Jumpman arriving at pickup and leaving pickup.</li>
+                <li>transit_time: Time it takes for Jumpman to leave pickup and arrive at dropoff.</li>
+                <li>total_order_time: Total time to complete order from when the order was completed to when the order was dropped off.</li>
+            </ul>
+        </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</body>
+</html>
